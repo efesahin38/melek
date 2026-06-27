@@ -24,6 +24,33 @@ class MelekApp extends StatelessWidget {
         title: 'MELEK',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.theme,
+        builder: (context, child) {
+          return Container(
+            color: Colors.black,
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 500),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppTheme.bgDark,
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.goldPrimary.withOpacity(0.05),
+                        blurRadius: 20,
+                        spreadRadius: 5,
+                      ),
+                    ],
+                    border: Border(
+                      left: BorderSide(color: AppTheme.borderGold.withOpacity(0.2), width: 1),
+                      right: BorderSide(color: AppTheme.borderGold.withOpacity(0.2), width: 1),
+                    ),
+                  ),
+                  child: ClipRect(child: child),
+                ),
+              ),
+            ),
+          );
+        },
         home: const SplashScreen(),
       ),
     );
