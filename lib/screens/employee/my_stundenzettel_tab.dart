@@ -182,31 +182,88 @@ class _MyStundenzettelTabState extends State<MyStundenzettelTab> {
               ),
             )
           else
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final sz = _stundenzettels[index];
-                    return _StundenzettelCard(
+            _buildSliverList(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSliverList() {
+    final grouped = <int, List<StundenzettelModel>>{};
+    for (final sz in _stundenzettels) {
+      grouped.putIfAbsent(sz.year, () => []).add(sz);
+    }
+    final years = grouped.keys.toList()..sort((a, b) => b.compareTo(a));
+
+    return SliverPadding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            final year = years[index];
+            final stundenzettelsForYear = grouped[year]!;
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: AppTheme.bgCard,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppTheme.border),
+              ),
+              child: ExpansionTile(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                collapsedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                initiallyExpanded: index == 0,
+                iconColor: AppTheme.goldPrimary,
+                collapsedIconColor: AppTheme.textMuted,
+                title: Row(
+                  children: [
+                    const Icon(Icons.calendar_today_rounded, color: AppTheme.goldPrimary),
+                    const SizedBox(width: 12),
+                    Text(
+                      year.toString(),
+                      style: const TextStyle(
+                        color: AppTheme.textPrimary,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppTheme.bgCardElevated,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        '${stundenzettelsForYear.length}',
+                        style: const TextStyle(color: AppTheme.textMuted, fontSize: 12),
+                      ),
+                    ),
+                  ],
+                ),
+                children: stundenzettelsForYear.map((sz) {
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                    child: _StundenzettelCard(
                       sz: sz,
                       onTap: () async {
                         final result = await Navigator.push<bool>(
                           context,
                           MaterialPageRoute(
-                            builder: (_) =>
-                                MyStundenzettelDetailScreen(sz: sz),
+                            builder: (_) => MyStundenzettelDetailScreen(sz: sz),
                           ),
                         );
                         if (result == true) _loadStundenzettels();
                       },
-                    );
-                  },
-                  childCount: _stundenzettels.length,
-                ),
+                    ),
+                  );
+                }).toList(),
               ),
-            ),
-        ],
+            );
+          },
+          childCount: years.length,
+        ),
       ),
     );
   }

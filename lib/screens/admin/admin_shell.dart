@@ -6,6 +6,9 @@ import '../login_screen.dart';
 import 'mitarbeiter_tab.dart';
 import 'touren_tab.dart';
 import 'stundenzettel_tab.dart';
+import '../chat_screen.dart';
+
+import '../settings_screen.dart';
 
 class AdminShell extends StatefulWidget {
   const AdminShell({super.key});
@@ -17,67 +20,16 @@ class AdminShell extends StatefulWidget {
 class _AdminShellState extends State<AdminShell> {
   int _currentIndex = 0;
 
-  // Keep tabs alive when switching between them
-  static const List<Widget> _tabs = [
+  final List<Widget> _tabs = const [
     MitarbeiterTab(),
     TourenTab(),
     StundenzettelTab(),
+    ChatScreen(),
   ];
-
-  Future<void> _logout(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppTheme.bgCard,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: AppTheme.borderGold),
-        ),
-        title: const Text(
-          'Abmelden',
-          style: TextStyle(
-            color: AppTheme.textGold,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        content: const Text(
-          'Möchten Sie sich wirklich abmelden?',
-          style: TextStyle(color: AppTheme.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text(
-              'Abbrechen',
-              style: TextStyle(color: AppTheme.textSecondary),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text(
-              'Abmelden',
-              style: TextStyle(
-                color: AppTheme.error,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true && context.mounted) {
-      await context.read<AuthProvider>().logout();
-      if (context.mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
-        );
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<AuthProvider>().user;
     final isDesktop = MediaQuery.of(context).size.width > 800;
 
     return Scaffold(
@@ -86,18 +38,32 @@ class _AdminShellState extends State<AdminShell> {
         backgroundColor: AppTheme.bgDark,
         elevation: 0,
         centerTitle: true,
-        title: ShaderMask(
-          shaderCallback: (bounds) =>
-              AppTheme.goldGradient.createShader(bounds),
-          child: const Text(
-            'MELEK Admin',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 2,
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ShaderMask(
+              shaderCallback: (bounds) =>
+                  AppTheme.goldGradient.createShader(bounds),
+              child: const Text(
+                'MELEK',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 2,
+                ),
+              ),
             ),
-          ),
+            const Text(
+              'Admin',
+              style: TextStyle(
+                color: AppTheme.goldPrimary,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1,
+              ),
+            ),
+          ],
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
@@ -116,13 +82,19 @@ class _AdminShellState extends State<AdminShell> {
         ),
         actions: [
           IconButton(
-            onPressed: () => _logout(context),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SettingsScreen()),
+              );
+            },
             icon: const Icon(
-              Icons.logout_rounded,
-              color: AppTheme.error,
+              Icons.settings_rounded,
+              color: AppTheme.goldPrimary,
             ),
-            tooltip: 'Abmelden',
+            tooltip: 'Einstellungen',
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: Row(
@@ -148,12 +120,16 @@ class _AdminShellState extends State<AdminShell> {
                   label: Text('Mitarbeiter'),
                 ),
                 NavigationRailDestination(
-                  icon: Icon(Icons.map_rounded),
+                  icon: Icon(Icons.directions_car_filled_rounded),
                   label: Text('Touren'),
                 ),
                 NavigationRailDestination(
-                  icon: Icon(Icons.access_time_rounded),
+                  icon: Icon(Icons.access_time_filled_rounded),
                   label: Text('Stundenzettel'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.forum_rounded),
+                  label: Text('Chat'),
                 ),
               ],
             ),
@@ -184,7 +160,7 @@ class _AdminShellState extends State<AdminShell> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.4),
+                    color: Colors.black.withValues(alpha: 0.4),
                     blurRadius: 20,
                     offset: const Offset(0, -4),
                   ),
@@ -209,12 +185,16 @@ class _AdminShellState extends State<AdminShell> {
                     label: 'Mitarbeiter',
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(Icons.map_rounded),
+                    icon: Icon(Icons.directions_car_filled_rounded),
                     label: 'Touren',
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(Icons.access_time_rounded),
+                    icon: Icon(Icons.access_time_filled_rounded),
                     label: 'Stundenzettel',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.forum_rounded),
+                    label: 'Chat',
                   ),
                 ],
               ),

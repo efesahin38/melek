@@ -150,8 +150,8 @@ class _MyDokumenteTabState extends State<MyDokumenteTab> {
                   },
                   childCount: DocumentFolder.defaultFolders.length,
                 ),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 200,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                   childAspectRatio: 1.1,

@@ -6,6 +6,8 @@ import '../../screens/login_screen.dart';
 import 'my_touren_tab.dart';
 import 'my_dokumente_tab.dart';
 import 'my_stundenzettel_tab.dart';
+import '../chat_screen.dart';
+import '../settings_screen.dart';
 
 class EmployeeShell extends StatefulWidget {
   const EmployeeShell({super.key});
@@ -17,63 +19,12 @@ class EmployeeShell extends StatefulWidget {
 class _EmployeeShellState extends State<EmployeeShell> {
   int _currentIndex = 0;
 
-  static const List<Widget> _tabs = [
+  final List<Widget> _tabs = const [
     MyTourenTab(),
     MyDokumenteTab(),
     MyStundenzettelTab(),
+    ChatScreen(),
   ];
-
-  Future<void> _logout(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppTheme.bgCard,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: AppTheme.borderGold),
-        ),
-        title: const Text(
-          'Abmelden',
-          style: TextStyle(
-            color: AppTheme.textGold,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        content: const Text(
-          'Möchten Sie sich wirklich abmelden?',
-          style: TextStyle(color: AppTheme.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text(
-              'Abbrechen',
-              style: TextStyle(color: AppTheme.textSecondary),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text(
-              'Abmelden',
-              style: TextStyle(
-                color: AppTheme.error,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true && context.mounted) {
-      await context.read<AuthProvider>().logout();
-      if (context.mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
-        );
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,13 +81,19 @@ class _EmployeeShellState extends State<EmployeeShell> {
         ),
         actions: [
           IconButton(
-            onPressed: () => _logout(context),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SettingsScreen()),
+              );
+            },
             icon: const Icon(
-              Icons.logout_rounded,
-              color: AppTheme.error,
+              Icons.settings_rounded,
+              color: AppTheme.goldPrimary,
             ),
-            tooltip: 'Abmelden',
+            tooltip: 'Einstellungen',
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: Row(
@@ -168,6 +125,10 @@ class _EmployeeShellState extends State<EmployeeShell> {
                 NavigationRailDestination(
                   icon: Icon(Icons.assignment_rounded),
                   label: Text('Stundenzettel'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.forum_rounded),
+                  label: Text('Chat'),
                 ),
               ],
             ),
@@ -229,6 +190,10 @@ class _EmployeeShellState extends State<EmployeeShell> {
                   BottomNavigationBarItem(
                     icon: Icon(Icons.assignment_rounded),
                     label: 'Stundenzettel',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.forum_rounded),
+                    label: 'Chat',
                   ),
                 ],
               ),

@@ -261,6 +261,24 @@ class SupabaseService {
     if (data.isEmpty) return null;
     return StundenzettelModel.fromJson(data.first);
   }
+  // ─── CHAT SYSTEM ─────────────────────────────────────────────────
+
+  static Stream<List<dynamic>> getChatStream() {
+    return _supabase
+        .from('chat_messages')
+        .stream(primaryKey: ['id'])
+        .order('created_at', ascending: true);
+  }
+
+  static Future<void> sendChatMessage({
+    required String userId,
+    required String message,
+  }) async {
+    await _supabase.from('chat_messages').insert({
+      'user_id': userId,
+      'message': message,
+    });
+  }
 }
 
 class ApiException implements Exception {
