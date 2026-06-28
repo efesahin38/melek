@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../config/theme.dart';
 import '../../models/user_model.dart';
-import '../../services/neon_service.dart';
+import '../../services/supabase_service.dart';
 import '../../widgets/gold_button.dart';
 
 class CreateTourScreen extends StatefulWidget {
@@ -34,7 +34,7 @@ class _CreateTourScreenState extends State<CreateTourScreen> {
 
   Future<void> _loadEmployees() async {
     try {
-      final emps = await NeonService.getEmployees();
+      final emps = await SupabaseService.getEmployees();
       setState(() {
         _employees = emps;
         _isLoadingEmployees = false;
@@ -77,7 +77,7 @@ class _CreateTourScreenState extends State<CreateTourScreen> {
     setState(() => _isLoading = true);
 
     try {
-      await NeonService.createTour(
+      await SupabaseService.createTour(
         tourDate: _selectedDate,
         locationName: _locationCtrl.text.trim(),
         address: _addressCtrl.text.trim(),

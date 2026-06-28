@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../../config/theme.dart';
 import '../../models/tour_model.dart';
 import '../../providers/auth_provider.dart';
-import '../../services/neon_service.dart';
+import '../../services/supabase_service.dart';
 import '../../widgets/tour_card.dart';
 import 'my_tour_detail_screen.dart';
 
@@ -29,7 +29,7 @@ class _MyTourenTabState extends State<MyTourenTab> {
     try {
       final userId = context.read<AuthProvider>().user?.id;
       if (userId != null) {
-        final tours = await NeonService.getTours(driverId: userId);
+        final tours = await SupabaseService.getTours(driverId: userId);
         if (mounted) setState(() => _tours = tours);
       }
     } catch (e) {

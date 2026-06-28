@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../config/theme.dart';
 import '../../models/user_model.dart';
-import '../../services/neon_service.dart';
+import '../../services/supabase_service.dart';
 import '../../services/auth_service.dart';
 import '../../widgets/gold_button.dart';
 
@@ -65,7 +65,7 @@ class _AddMitarbeiterScreenState extends State<AddMitarbeiterScreen>
     setState(() => _isLoading = true);
 
     try {
-      await NeonService.createUser(
+      await SupabaseService.createUser(
         name: _nameCtrl.text.trim(),
         email: _emailCtrl.text.trim().toLowerCase(),
         passwordHash: AuthService.hashPassword(_passCtrl.text),

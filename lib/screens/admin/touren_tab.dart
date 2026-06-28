@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import '../../config/theme.dart';
 import '../../models/tour_model.dart';
 import '../../providers/auth_provider.dart';
-import '../../services/neon_service.dart';
+import '../../services/supabase_service.dart';
 import '../../widgets/gold_button.dart';
 import 'create_tour_screen.dart';
 import 'tour_detail_admin_screen.dart';
@@ -36,7 +36,7 @@ class _TourenTabState extends State<TourenTab> {
     });
 
     try {
-      final tours = await NeonService.getTours();
+      final tours = await SupabaseService.getTours();
       if (mounted) {
         setState(() {
           _tours = tours;

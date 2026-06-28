@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import '../../config/theme.dart';
 import '../../models/user_model.dart';
 import '../../models/document_model.dart';
-import '../../services/neon_service.dart';
+import '../../services/supabase_service.dart';
 import '../../widgets/folder_card.dart';
 import 'folder_documents_screen.dart';
 
@@ -30,7 +30,7 @@ class _MitarbeiterDetailScreenState extends State<MitarbeiterDetailScreen> {
   Future<void> _loadDocumentCounts() async {
     setState(() => isLoading = true);
     try {
-      final counts = await NeonService.getDocumentCountsByEmployee(
+      final counts = await SupabaseService.getDocumentCountsByEmployee(
         widget.employee.id,
       );
       if (mounted) {

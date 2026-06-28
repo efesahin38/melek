@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import '../../config/theme.dart';
 import '../../models/stundenzettel_model.dart';
 import '../../providers/auth_provider.dart';
-import '../../services/neon_service.dart';
+import '../../services/supabase_service.dart';
 import '../../services/pdf_service.dart';
 import '../../widgets/gold_button.dart';
 import '../../widgets/signature_pad_dialog.dart';
@@ -38,7 +38,7 @@ class _StundenzettelDetailScreenState
   Future<void> _loadFresh() async {
     setState(() => _isLoading = true);
     try {
-      final fresh = await NeonService.getStundenzettelById(widget.sz.id);
+      final fresh = await SupabaseService.getStundenzettelById(widget.sz.id);
       if (mounted) {
         setState(() {
           if (fresh != null) _sz = fresh;
@@ -61,7 +61,7 @@ class _StundenzettelDetailScreenState
 
     setState(() => _isSigning = true);
     try {
-      await NeonService.signStundenzettelAdmin(
+      await SupabaseService.signStundenzettelAdmin(
           id: _sz.id, signature: signature);
       await _loadFresh();
       if (_sz.isFullySigned && mounted) {

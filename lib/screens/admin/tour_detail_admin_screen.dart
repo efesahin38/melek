@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../config/theme.dart';
 import '../../models/tour_model.dart';
-import '../../services/neon_service.dart';
+import '../../services/supabase_service.dart';
 import '../../widgets/gold_button.dart';
 
 class TourDetailAdminScreen extends StatefulWidget {
@@ -56,7 +56,7 @@ class _TourDetailAdminScreenState extends State<TourDetailAdminScreen> {
     if (confirm == true) {
       setState(() => _isLoading = true);
       try {
-        await NeonService.deleteTour(_tour.id);
+        await SupabaseService.deleteTour(_tour.id);
         if (mounted) Navigator.pop(context, true);
       } catch (e) {
         setState(() => _isLoading = false);

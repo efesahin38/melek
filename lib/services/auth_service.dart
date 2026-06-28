@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
-import 'neon_service.dart';
+import 'supabase_service.dart';
 
 class AuthService {
   static const String _prefKeyUserId = 'user_id';
@@ -17,11 +17,11 @@ class AuthService {
   }
 
   static Future<UserModel?> login(String email, String password) async {
-    final user = await NeonService.getUserByEmail(email.trim().toLowerCase());
+    final user = await SupabaseService.getUserByEmail(email.trim().toLowerCase());
     if (user == null) return null;
 
     // Fetch full user with password hash to verify
-    final fullUser = await NeonService.verifyLogin(
+    final fullUser = await SupabaseService.verifyLogin(
       email.trim().toLowerCase(),
       hashPassword(password),
     );

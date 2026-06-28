@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../../config/theme.dart';
 import '../../models/stundenzettel_model.dart';
 import '../../providers/auth_provider.dart';
-import '../../services/neon_service.dart';
+import '../../services/supabase_service.dart';
 import 'my_stundenzettel_detail_screen.dart';
 
 class MyStundenzettelTab extends StatefulWidget {
@@ -29,7 +29,7 @@ class _MyStundenzettelTabState extends State<MyStundenzettelTab> {
       final employeeId = context.read<AuthProvider>().user?.id;
       if (employeeId != null) {
         final list =
-            await NeonService.getStundenzettels(employeeId: employeeId);
+            await SupabaseService.getStundenzettels(employeeId: employeeId);
         if (mounted) setState(() => _stundenzettels = list);
       }
     } catch (e) {

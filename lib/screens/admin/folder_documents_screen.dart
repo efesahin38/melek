@@ -10,7 +10,7 @@ import 'package:intl/intl.dart';
 import '../../config/theme.dart';
 import '../../models/document_model.dart';
 import '../../providers/auth_provider.dart';
-import '../../services/neon_service.dart';
+import '../../services/supabase_service.dart';
 import '../../widgets/gold_button.dart';
 
 class FolderDocumentsScreen extends StatefulWidget {
@@ -45,7 +45,7 @@ class _FolderDocumentsScreenState extends State<FolderDocumentsScreen> {
   Future<void> _loadDocuments() async {
     setState(() => isLoading = true);
     try {
-      final docs = await NeonService.getDocuments(
+      final docs = await SupabaseService.getDocuments(
         employeeId: widget.employeeId,
         folderId: widget.folderId,
       );
@@ -88,7 +88,7 @@ class _FolderDocumentsScreenState extends State<FolderDocumentsScreen> {
       final base64Data = base64Encode(file.bytes!);
       final fileType = _getMimeType(file.name);
 
-      await NeonService.uploadDocument(
+      await SupabaseService.uploadDocument(
         employeeId: widget.employeeId,
         folderId: widget.folderId,
         fileName: file.name,
@@ -262,7 +262,7 @@ class _FolderDocumentsScreenState extends State<FolderDocumentsScreen> {
     if (confirmed != true) return;
 
     try {
-      await NeonService.deleteDocument(doc.id);
+      await SupabaseService.deleteDocument(doc.id);
       await _loadDocuments();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

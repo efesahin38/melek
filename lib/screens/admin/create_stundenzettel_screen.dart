@@ -5,7 +5,7 @@ import '../../config/theme.dart';
 import '../../models/user_model.dart';
 import '../../models/stundenzettel_model.dart';
 import '../../providers/auth_provider.dart';
-import '../../services/neon_service.dart';
+import '../../services/supabase_service.dart';
 import '../../widgets/gold_button.dart';
 
 // ── Local form model ─────────────────────────────────────────────────────────
@@ -103,7 +103,7 @@ class _CreateStundenzettelScreenState
 
   Future<void> _loadEmployees() async {
     try {
-      final employees = await NeonService.getEmployees();
+      final employees = await SupabaseService.getEmployees();
       if (mounted) {
         setState(() {
           _employees = employees;
@@ -265,7 +265,7 @@ class _CreateStundenzettelScreenState
         );
       }).toList();
 
-      await NeonService.createStundenzettel(
+      await SupabaseService.createStundenzettel(
         employeeId: _selectedEmployee!.id,
         month: _selectedMonth,
         year: _selectedYear,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../config/theme.dart';
 import '../../models/user_model.dart';
-import '../../services/neon_service.dart';
+import '../../services/supabase_service.dart';
 import '../../widgets/gold_button.dart';
 import 'mitarbeiter_detail_screen.dart';
 import 'add_mitarbeiter_screen.dart';
@@ -32,7 +32,7 @@ class _MitarbeiterTabState extends State<MitarbeiterTab> {
     });
 
     try {
-      final employees = await NeonService.getEmployees();
+      final employees = await SupabaseService.getEmployees();
       if (mounted) {
         setState(() {
           _employees = employees;
@@ -98,7 +98,7 @@ class _MitarbeiterTabState extends State<MitarbeiterTab> {
 
   Future<void> _deleteEmployee(UserModel employee) async {
     try {
-      await NeonService.deleteUser(employee.id);
+      await SupabaseService.deleteUser(employee.id);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../config/theme.dart';
 import '../../models/stundenzettel_model.dart';
-import '../../services/neon_service.dart';
+import '../../services/supabase_service.dart';
 import '../../widgets/gold_button.dart';
 import 'create_stundenzettel_screen.dart';
 import 'stundenzettel_detail_screen.dart';
@@ -32,7 +32,7 @@ class _StundenzettelTabState extends State<StundenzettelTab> {
     });
 
     try {
-      final list = await NeonService.getStundenzettels();
+      final list = await SupabaseService.getStundenzettels();
       if (mounted) {
         setState(() {
           _stundenzettels = list;

@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../../config/theme.dart';
 import '../../models/document_model.dart';
 import '../../providers/auth_provider.dart';
-import '../../services/neon_service.dart';
+import '../../services/supabase_service.dart';
 import '../../widgets/folder_card.dart';
 import '../admin/folder_documents_screen.dart';
 
@@ -30,7 +30,7 @@ class _MyDokumenteTabState extends State<MyDokumenteTab> {
       final employeeId = context.read<AuthProvider>().user?.id;
       if (employeeId != null) {
         final counts =
-            await NeonService.getDocumentCountsByEmployee(employeeId);
+            await SupabaseService.getDocumentCountsByEmployee(employeeId);
         if (mounted) setState(() => _documentCounts = counts);
       }
     } catch (e) {

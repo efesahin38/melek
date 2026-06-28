@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../../config/theme.dart';
 import '../../models/stundenzettel_model.dart';
 import '../../providers/auth_provider.dart';
-import '../../services/neon_service.dart';
+import '../../services/supabase_service.dart';
 import '../../services/pdf_service.dart';
 import '../../widgets/gold_button.dart';
 import '../../widgets/signature_pad_dialog.dart';
@@ -36,7 +36,7 @@ class _MyStundenzettelDetailScreenState
   Future<void> _reloadSz() async {
     setState(() => _isLoading = true);
     try {
-      final fresh = await NeonService.getStundenzettelById(_sz.id);
+      final fresh = await SupabaseService.getStundenzettelById(_sz.id);
       if (fresh != null && mounted) setState(() => _sz = fresh);
     } catch (_) {
       // fallback to widget.sz
@@ -67,7 +67,7 @@ class _MyStundenzettelDetailScreenState
 
     setState(() => _isSigning = true);
     try {
-      await NeonService.signStundenzettelEmployee(
+      await SupabaseService.signStundenzettelEmployee(
         id: _sz.id,
         signature: signature,
       );
@@ -119,7 +119,7 @@ class _MyStundenzettelDetailScreenState
       final fileName =
           'Stundenzettel_${_sz.monthYearLabel.replaceAll(' ', '_')}_$employeeName.pdf';
 
-      await NeonService.uploadDocument(
+      await SupabaseService.uploadDocument(
         employeeId: employeeId,
         folderId: 11,
         fileName: fileName,

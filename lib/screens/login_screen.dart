@@ -86,6 +86,8 @@ class _LoginScreenState extends State<LoginScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: const BoxDecoration(gradient: AppTheme.bgGradient),
         child: SafeArea(
           child: SingleChildScrollView(
@@ -94,7 +96,10 @@ class _LoginScreenState extends State<LoginScreen>
               opacity: _fadeAnim,
               child: SlideTransition(
                 position: _slideAnim,
-                child: Form(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 500),
+                    child: Form(
                   key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,6 +279,8 @@ class _LoginScreenState extends State<LoginScreen>
                         ),
                       ),
                     ],
+                  ),
+                ),
                   ),
                 ),
               ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../config/theme.dart';
 import '../../models/tour_model.dart';
-import '../../services/neon_service.dart';
+import '../../services/supabase_service.dart';
 import '../../widgets/gold_button.dart';
 
 class MyTourDetailScreen extends StatefulWidget {
@@ -27,7 +27,7 @@ class _MyTourDetailScreenState extends State<MyTourDetailScreen> {
 
   Future<void> _reloadTour() async {
     try {
-      final fetchedTour = await NeonService.getTourById(_tour.id);
+      final fetchedTour = await SupabaseService.getTourById(_tour.id);
       if (fetchedTour != null && mounted) {
         setState(() => _tour = fetchedTour);
       }
@@ -65,7 +65,7 @@ class _MyTourDetailScreenState extends State<MyTourDetailScreen> {
   Future<void> _acceptTour() async {
     setState(() => _isLoading = true);
     try {
-      await NeonService.updateTourStatus(
+      await SupabaseService.updateTourStatus(
         tourId: _tour.id,
         status: TourStatus.inProgress,
         acceptedAt: DateTime.now(),
@@ -103,7 +103,7 @@ class _MyTourDetailScreenState extends State<MyTourDetailScreen> {
   Future<void> _completeTour() async {
     setState(() => _isLoading = true);
     try {
-      await NeonService.updateTourStatus(
+      await SupabaseService.updateTourStatus(
         tourId: _tour.id,
         status: TourStatus.completed,
         completedAt: DateTime.now(),
