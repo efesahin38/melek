@@ -5,6 +5,7 @@ import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/supabase_service.dart';
 import '../../widgets/gold_button.dart';
+import 'login_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -42,7 +43,11 @@ class SettingsScreen extends StatelessWidget {
     if (confirmed == true && context.mounted) {
       await context.read<AuthProvider>().logout();
       if (context.mounted) {
-        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          (route) => false,
+        );
       }
     }
   }
@@ -86,7 +91,11 @@ class SettingsScreen extends StatelessWidget {
         if (context.mounted) {
           await context.read<AuthProvider>().logout();
           if (context.mounted) {
-            Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => const LoginScreen()),
+              (route) => false,
+            );
           }
         }
       } catch (e) {

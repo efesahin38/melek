@@ -6,7 +6,6 @@ import '../../screens/login_screen.dart';
 import 'my_touren_tab.dart';
 import 'my_dokumente_tab.dart';
 import 'my_stundenzettel_tab.dart';
-import '../chat_screen.dart';
 import '../settings_screen.dart';
 
 class EmployeeShell extends StatefulWidget {
@@ -23,7 +22,6 @@ class _EmployeeShellState extends State<EmployeeShell> {
     MyTourenTab(),
     MyDokumenteTab(),
     MyStundenzettelTab(),
-    ChatScreen(),
   ];
 
   @override
@@ -126,10 +124,6 @@ class _EmployeeShellState extends State<EmployeeShell> {
                   icon: Icon(Icons.assignment_rounded),
                   label: Text('Stundenzettel'),
                 ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.forum_rounded),
-                  label: Text('Chat'),
-                ),
               ],
             ),
           if (isDesktop)
@@ -190,10 +184,6 @@ class _EmployeeShellState extends State<EmployeeShell> {
                   BottomNavigationBarItem(
                     icon: Icon(Icons.assignment_rounded),
                     label: 'Stundenzettel',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.forum_rounded),
-                    label: 'Chat',
                   ),
                 ],
               ),

@@ -6,7 +6,6 @@ import '../login_screen.dart';
 import 'mitarbeiter_tab.dart';
 import 'touren_tab.dart';
 import 'stundenzettel_tab.dart';
-import '../chat_screen.dart';
 
 import '../settings_screen.dart';
 
@@ -24,7 +23,6 @@ class _AdminShellState extends State<AdminShell> {
     MitarbeiterTab(),
     TourenTab(),
     StundenzettelTab(),
-    ChatScreen(),
   ];
 
   @override
@@ -127,10 +125,6 @@ class _AdminShellState extends State<AdminShell> {
                   icon: Icon(Icons.access_time_filled_rounded),
                   label: Text('Stundenzettel'),
                 ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.forum_rounded),
-                  label: Text('Chat'),
-                ),
               ],
             ),
           if (isDesktop)
@@ -191,10 +185,6 @@ class _AdminShellState extends State<AdminShell> {
                   BottomNavigationBarItem(
                     icon: Icon(Icons.access_time_filled_rounded),
                     label: 'Stundenzettel',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.forum_rounded),
-                    label: 'Chat',
                   ),
                 ],
               ),
