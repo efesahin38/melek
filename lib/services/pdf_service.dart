@@ -25,12 +25,16 @@ class PdfService {
     ];
 
     pdf.addPage(
-      pw.MultiPage(
+      pw.Page(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(16),
-        header: (ctx) => pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
+        build: (ctx) => pw.FittedBox(
+          fit: pw.BoxFit.scaleDown,
+          child: pw.Container(
+            width: PdfPageFormat.a4.width - 32,
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
@@ -75,9 +79,6 @@ class PdfService {
             pw.SizedBox(height: 8),
             pw.Divider(color: const PdfColor.fromInt(0xFFC9A227)),
             pw.SizedBox(height: 8),
-          ],
-        ),
-        build: (ctx) => [
           // Employee Info
           pw.Container(
             padding: const pw.EdgeInsets.all(12),
@@ -304,7 +305,10 @@ class PdfService {
                   fontSize: 8, color: PdfColors.grey500),
             ),
           ),
-        ],
+              ],
+            ),
+          ),
+        ),
       ),
     );
 
