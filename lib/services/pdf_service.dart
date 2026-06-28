@@ -27,7 +27,7 @@ class PdfService {
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
-        margin: const pw.EdgeInsets.all(24),
+        margin: const pw.EdgeInsets.all(16),
         header: (ctx) => pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
@@ -40,7 +40,7 @@ class PdfService {
                     pw.Text(
                       'MELEK',
                       style: pw.TextStyle(
-                        fontSize: 28,
+                        fontSize: 22,
                         fontWeight: pw.FontWeight.bold,
                         color: const PdfColor.fromInt(0xFFC9A227),
                       ),
@@ -114,13 +114,13 @@ class PdfService {
               ],
             ),
           ),
-          pw.SizedBox(height: 12),
+          pw.SizedBox(height: 6),
 
           // Work entries table
           pw.Text(
             'Arbeitsstunden im Detail',
             style: pw.TextStyle(
-                fontSize: 14, fontWeight: pw.FontWeight.bold),
+                fontSize: 12, fontWeight: pw.FontWeight.bold),
           ),
           pw.SizedBox(height: 8),
           pw.TableHelper.fromTextArray(
@@ -180,7 +180,7 @@ class PdfService {
               5: const pw.FlexColumnWidth(),
             },
           ),
-          pw.SizedBox(height: 12),
+          pw.SizedBox(height: 6),
 
           // Summary
           pw.Container(
@@ -219,7 +219,7 @@ class PdfService {
               ],
             ),
           ),
-          pw.SizedBox(height: 16),
+          pw.SizedBox(height: 8),
 
           // Signatures
           pw.Row(
@@ -234,11 +234,11 @@ class PdfService {
                     if (adminSigBytes != null) ...[
                       pw.Image(
                         pw.MemoryImage(adminSigBytes),
-                        height: 60,
+                        height: 40,
                       ),
                     ] else ...[
                       pw.Container(
-                        height: 60,
+                        height: 40,
                         decoration: const pw.BoxDecoration(
                           border: pw.Border(
                               bottom: pw.BorderSide(color: PdfColors.black)),
@@ -269,11 +269,11 @@ class PdfService {
                     if (empSigBytes != null) ...[
                       pw.Image(
                         pw.MemoryImage(empSigBytes),
-                        height: 60,
+                        height: 40,
                       ),
                     ] else ...[
                       pw.Container(
-                        height: 60,
+                        height: 40,
                         decoration: const pw.BoxDecoration(
                           border: pw.Border(
                               bottom: pw.BorderSide(color: PdfColors.black)),
