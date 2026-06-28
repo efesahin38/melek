@@ -174,9 +174,12 @@ class _AddMitarbeiterScreenState extends State<AddMitarbeiterScreen>
             decoration: const BoxDecoration(gradient: AppTheme.bgGradient),
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
-              child: Form(
-                key: _formKey,
-                child: Column(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1000),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // ── Header Card ───────────────────────────────────
@@ -485,7 +488,9 @@ class _AddMitarbeiterScreenState extends State<AddMitarbeiterScreen>
           ),
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 }
 
