@@ -41,7 +41,6 @@ dependencies:
   uuid: ^4.4.0
   shimmer: ^3.0.0
   supabase_flutter: ^2.5.0
-  flutter_dotenv: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -62,4 +61,3 @@ flutter:
   assets:
     - assets/icon/
     - assets/images/
-    - .env
