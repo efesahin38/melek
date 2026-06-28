@@ -27,7 +27,7 @@ class PdfService {
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
-        margin: const pw.EdgeInsets.all(32),
+        margin: const pw.EdgeInsets.all(24),
         header: (ctx) => pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
@@ -80,7 +80,7 @@ class PdfService {
         build: (ctx) => [
           // Employee Info
           pw.Container(
-            padding: const pw.EdgeInsets.all(16),
+            padding: const pw.EdgeInsets.all(12),
             decoration: pw.BoxDecoration(
               color: PdfColors.grey100,
               borderRadius: pw.BorderRadius.circular(8),
@@ -93,10 +93,10 @@ class PdfService {
                     children: [
                       pw.Text('Mitarbeiter',
                           style: pw.TextStyle(
-                              fontSize: 10, color: PdfColors.grey600)),
+                              fontSize: 9, color: PdfColors.grey600)),
                       pw.Text(employeeName,
                           style: pw.TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: pw.FontWeight.bold)),
                     ],
                   ),
@@ -105,7 +105,7 @@ class PdfService {
                   crossAxisAlignment: pw.CrossAxisAlignment.end,
                   children: [
                     _infoRow('Arbeitstage', '${sz.totalDays ?? 0} Tage'),
-                    pw.SizedBox(height: 4),
+                    pw.SizedBox(height: 2),
                     _infoRow(
                         'Gesamtstunden',
                         '${(sz.totalHours ?? 0).toStringAsFixed(1)} Std.'),
@@ -114,7 +114,7 @@ class PdfService {
               ],
             ),
           ),
-          pw.SizedBox(height: 20),
+          pw.SizedBox(height: 12),
 
           // Work entries table
           pw.Text(
@@ -154,13 +154,15 @@ class PdfService {
               ];
             }).toList(),
             headerStyle: pw.TextStyle(
+              fontSize: 9,
               fontWeight: pw.FontWeight.bold,
               color: PdfColors.white,
             ),
             headerDecoration: const pw.BoxDecoration(
               color: PdfColor.fromInt(0xFF1A1A38),
             ),
-            cellStyle: const pw.TextStyle(fontSize: 10),
+            cellStyle: const pw.TextStyle(fontSize: 8.5),
+            cellPadding: const pw.EdgeInsets.symmetric(vertical: 2, horizontal: 4),
             rowDecoration: const pw.BoxDecoration(),
             oddRowDecoration: const pw.BoxDecoration(
               color: PdfColors.grey100,
@@ -178,7 +180,7 @@ class PdfService {
               5: const pw.FlexColumnWidth(),
             },
           ),
-          pw.SizedBox(height: 20),
+          pw.SizedBox(height: 12),
 
           // Summary
           pw.Container(
@@ -217,7 +219,7 @@ class PdfService {
               ],
             ),
           ),
-          pw.SizedBox(height: 40),
+          pw.SizedBox(height: 16),
 
           // Signatures
           pw.Row(
@@ -294,7 +296,7 @@ class PdfService {
               ),
             ],
           ),
-          pw.SizedBox(height: 20),
+          pw.SizedBox(height: 8),
           pw.Center(
             child: pw.Text(
               'Dieses Dokument wurde elektronisch erstellt – MELEK v1.0',
