@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:open_file/open_file.dart';
@@ -7,6 +8,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
+import 'package:universal_html/html.dart' as html;
+import 'package:desktop_drop/desktop_drop.dart';
 import '../../config/theme.dart';
 import '../../models/document_model.dart';
 import '../../providers/auth_provider.dart';
@@ -35,6 +38,7 @@ class _FolderDocumentsScreenState extends State<FolderDocumentsScreen> {
   List<DocumentModel> documents = [];
   bool isLoading = true;
   bool _isUploading = false;
+  bool _isDragging = false;
 
   @override
   void initState() {
@@ -100,34 +104,50 @@ class _FolderDocumentsScreenState extends State<FolderDocumentsScreen> {
       await _loadDocuments();
 
       if (mounted) {
-        setState(() => _isUploading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(Icons.check_circle_rounded,
-                    color: AppTheme.success, size: 20),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    '„${file.name}" erfolgreich hochgeladen.',
-                    style: const TextStyle(color: AppTheme.textPrimary),
-                  ),
-                ),
-              ],
-            ),
-            backgroundColor: AppTheme.bgCardElevated,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)),
-          ),
-        );
+        _showSuccess('„${file.name}" erfolgreich hochgeladen.');
       }
     } catch (e) {
       if (mounted) {
-        setState(() => _isUploading = false);
         _showError('Fehler beim Hochladen: ${e.toString()}');
       }
+    } finally {
+      if (mounted) setState(() => _isUploading = false);
+    }
+  }
+
+  Future<void> _handleDrop(DropDoneDetails detail) async {
+    setState(() => _isDragging = false);
+    if (detail.files.isEmpty) return;
+
+    final authProvider = context.read<AuthProvider>();
+    final uploader = authProvider.user;
+    if (uploader == null) return;
+
+    setState(() => _isUploading = true);
+
+    try {
+      for (final xfile in detail.files) {
+        final bytes = await xfile.readAsBytes();
+        final base64Data = base64Encode(bytes);
+        final fileType = _getMimeType(xfile.name);
+
+        await SupabaseService.uploadDocument(
+          employeeId: widget.employeeId,
+          folderId: widget.folderId,
+          fileName: xfile.name,
+          fileType: fileType,
+          fileData: base64Data,
+          uploadedBy: uploader.id,
+        );
+      }
+      await _loadDocuments();
+      if (mounted) {
+        _showSuccess('${detail.files.length} Datei(en) erfolgreich hochgeladen.');
+      }
+    } catch (e) {
+      if (mounted) _showError('Fehler beim Hochladen: ${e.toString()}');
+    } finally {
+      if (mounted) setState(() => _isUploading = false);
     }
   }
 
@@ -139,6 +159,15 @@ class _FolderDocumentsScreenState extends State<FolderDocumentsScreen> {
       return;
     }
     try {
+      if (kIsWeb) {
+        final mimeType = doc.fileType;
+        final uri = 'data:$mimeType;base64,${doc.fileData}';
+        html.AnchorElement(href: uri)
+          ..setAttribute('download', doc.fileName)
+          ..click();
+        return;
+      }
+
       final bytes = base64Decode(doc.fileData!);
       final tempDir = await getTemporaryDirectory();
       final safeFileName = doc.fileName.replaceAll(RegExp(r'[^\w\.\-]'), '_');
@@ -163,6 +192,16 @@ class _FolderDocumentsScreenState extends State<FolderDocumentsScreen> {
       return;
     }
     try {
+      if (kIsWeb) {
+        // On web, sharing is identical to downloading for our purposes
+        final mimeType = doc.fileType;
+        final uri = 'data:$mimeType;base64,${doc.fileData}';
+        html.AnchorElement(href: uri)
+          ..setAttribute('download', doc.fileName)
+          ..click();
+        return;
+      }
+
       final bytes = base64Decode(doc.fileData!);
       final tempDir = await getTemporaryDirectory();
       final safeFileName = doc.fileName.replaceAll(RegExp(r'[^\w\.\-]'), '_');
@@ -265,24 +304,7 @@ class _FolderDocumentsScreenState extends State<FolderDocumentsScreen> {
       await SupabaseService.deleteDocument(doc.id);
       await _loadDocuments();
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Row(
-              children: [
-                Icon(Icons.delete_rounded, color: AppTheme.error, size: 20),
-                SizedBox(width: 10),
-                Text(
-                  'Dokument wurde gelöscht.',
-                  style: TextStyle(color: AppTheme.textPrimary),
-                ),
-              ],
-            ),
-            backgroundColor: AppTheme.bgCardElevated,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)),
-          ),
-        );
+        _showSuccess('Dokument wurde gelöscht.');
       }
     } catch (e) {
       if (mounted) {
@@ -292,6 +314,28 @@ class _FolderDocumentsScreenState extends State<FolderDocumentsScreen> {
   }
 
   // ─── Helpers ───────────────────────────────────────────────────────────────
+
+  void _showSuccess(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle_rounded, color: AppTheme.success, size: 20),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(color: AppTheme.textPrimary),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: AppTheme.bgCardElevated,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -427,17 +471,66 @@ class _FolderDocumentsScreenState extends State<FolderDocumentsScreen> {
                   : const Icon(Icons.upload_file_rounded),
             )
           : null,
-      body: RefreshIndicator(
-        onRefresh: _loadDocuments,
-        color: AppTheme.goldPrimary,
-        backgroundColor: AppTheme.bgCard,
-        child: isLoading
-            ? const Center(
-                child: CircularProgressIndicator(color: AppTheme.goldPrimary),
-              )
-            : documents.isEmpty
-                ? _buildEmptyState()
-                : _buildDocumentList(),
+      body: DropTarget(
+        onDragDone: widget.isAdmin ? _handleDrop : null,
+        onDragEntered: (_) {
+          if (widget.isAdmin) setState(() => _isDragging = true);
+        },
+        onDragExited: (_) {
+          if (widget.isAdmin) setState(() => _isDragging = false);
+        },
+        child: Stack(
+          children: [
+            RefreshIndicator(
+              onRefresh: _loadDocuments,
+              color: AppTheme.goldPrimary,
+              backgroundColor: AppTheme.bgCard,
+              child: isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(color: AppTheme.goldPrimary),
+                    )
+                  : documents.isEmpty
+                      ? _buildEmptyState()
+                      : _buildDocumentList(),
+            ),
+            if (_isDragging)
+              Container(
+                color: AppTheme.goldPrimary.withOpacity(0.15),
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(32),
+                    decoration: BoxDecoration(
+                      color: AppTheme.bgCardElevated,
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: AppTheme.goldPrimary, width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.goldPrimary.withOpacity(0.3),
+                          blurRadius: 24,
+                          spreadRadius: 8,
+                        )
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.upload_file_rounded, size: 64, color: AppTheme.goldPrimary),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Dateien hier ablegen',
+                          style: TextStyle(
+                            color: AppTheme.textPrimary,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
